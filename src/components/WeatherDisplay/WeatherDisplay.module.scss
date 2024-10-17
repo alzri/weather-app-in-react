@@ -1,5 +1,36 @@
 .weather-info {
-    display: grid;
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.city-name {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.weather-details {
+    display: flex;
+    gap: 8px;
+
+    p {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 18px;
+        font-weight: 400;
+        color: #fff;
+    }
+}
+
+.toggle-button {
+    width: 250px;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: #ffffff6c;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
 }
