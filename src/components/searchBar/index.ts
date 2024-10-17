@@ -1,2 +1,2 @@
 export * from './SearchBar';
-export * from './SearchBarProps.tyles';
+export * from './SearchBarProps.types';

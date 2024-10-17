@@ -1,5 +1,5 @@
-import { WeatherDataProps } from "../../hook/WeatherDataProps.types";
+import { WeatherData } from "../../hook/types/weather.types";
 
 export interface WeatherDisplayProps {
-    weather: WeatherDataProps
+  weather: WeatherData | null; 
 }

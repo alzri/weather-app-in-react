@@ -1,63 +1,48 @@
-import React from "react";
-import { useState, useEffect } from "react";
-import { WeatherDataProps } from "./WeatherDataProps.types";
+import { useState } from "react";
+import { WeatherData, GeolocationCoords, WeatherApiResponse, ErrorData } from "./types/weather.types";
 
 const KELVIN = 273;
-const API_KEY = '8cefda58c9469aa86555ae59e49b59a1';
+const API_KEY = "8cefda58c9469aa86555ae59e49b59a1";
 
 export const useWeather = () => {
-  const [city, setCity] = useState<string>('');
-  const [latitude, setLatitude] = useState<number>(0);
-  const [longitude, setLongitude] = useState<number>(0);
-  const [weather, setWeather] = useState<WeatherDataProps | null>(null);
-  const [error, setError] = useState<string>('');
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLatitude(position.coords.latitude);
-          setLongitude(position.coords.longitude);
-          getWeather(position.coords.latitude, position.coords.longitude);
-        },
-        (err) => setError(err.message)
+  const getWeatherByCoords = async (coords: GeolocationCoords) => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${coords.latitude}&lon=${coords.longitude}&appid=${API_KEY}`
       );
-    } else {
-      setError("Browser doesn't support geolocation");
+      const data: WeatherApiResponse = await response.json();
+      setWeather({
+        temperature: { value: Math.floor(data.main.temp - KELVIN), unit: "celsius" },
+        description: data.weather[0].description,
+        iconId: data.weather[0].icon,
+        city: data.name,
+        country: data.sys.country,
+      });
+    } catch (err) {
+      setError((err as ErrorData).message);
     }
-  }, []);
-
-  const getSearchWeather = (city: string) => {
-    const api = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}`;
-    fetch(api)
-      .then((response) => response.json())
-      .then((data) => {
-        setWeather({
-          temperature: Math.floor(data.main.temp - KELVIN),
-          description: data.weather[0].description,
-          iconId: data.weather[0].icon,
-          city: data.name,
-          country: data.sys.country,
-        });
-      })
-      .catch((err) => setError(err.message));
   };
 
-  const getWeather = (latitude: number, longitude: number) => {
-    const api = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}`;
-    fetch(api)
-      .then((response) => response.json())
-      .then((data) => {
-        setWeather({
-          temperature: Math.floor(data.main.temp - KELVIN),
-          description: data.weather[0].description,
-          iconId: data.weather[0].icon,
-          city: data.name,
-          country: data.sys.country,
-        });
-      })
-      .catch((err) => setError(err.message));
+  const getWeatherByCity = async (city: string) => {
+    try {
+      const response = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}`
+      );
+      const data: WeatherApiResponse = await response.json();
+      setWeather({
+        temperature: { value: Math.floor(data.main.temp - KELVIN), unit: "celsius" },
+        description: data.weather[0].description,
+        iconId: data.weather[0].icon,
+        city: data.name,
+        country: data.sys.country,
+      });
+    } catch (err) {
+      setError((err as ErrorData).message);
+    }
   };
 
-  return { weather, error, getSearchWeather };
+  return { weather, error, getWeatherByCoords, getWeatherByCity };
 };

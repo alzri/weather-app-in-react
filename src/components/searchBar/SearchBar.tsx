@@ -1,30 +1,26 @@
-import React, { useState } from "react";
-import { SearchBarProps } from "./SearchBarProps.tyles";
+import React, {useState} from "react";
+import { SearchBarProps } from "./SearchBarProps.types";
+import styles from './SearchBar.module.scss';
 
-const SearchBar: React.FC<SearchBarProps> = ({setCity}) => {
-    const [cityInput, setCityInput] = useState<string>('');
+const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
+  const [city, setCity] = useState('');
 
-    const handleSeacrh = () => {
-        if (cityInput) {
-            setCity(cityInput)
-        }
-    };
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      onSearch(city);
+    }
+  };
 
-    return (
-        <div>
-            <input 
-                type="text" 
-                value={cityInput} 
-                onChange={(e) => setCityInput(e.target.value)}
-                placeholder="Enter city name"
-                onKeyDown={(e) => {
-                    if (e.key === 'Enter') handleSeacrh();
-                }}
-             />
-
-             <button onClick={handleSeacrh}>Seach</button>
-        </div>
-    )
+  return (
+    <input
+      className={styles.search}
+      type="text"
+      placeholder="Enter city"
+      value={city}
+      onChange={(e) => setCity(e.target.value)}
+      onKeyPress={handleSearch}
+    />
+  );
 };
 
 export default SearchBar;
